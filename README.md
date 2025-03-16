@@ -9,8 +9,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Configuration
-TOKEN = "7216077060:AAHtoL9rUOH26UwjxHXBK-lnqzHnCz3ID-s"  # Replace with your bot token
-ADMIN_ID =6260262910 # Replace with your admin ID
+TOKEN = "7915140930:AAGMZY1MkNsarvZLFRghBsxedUAxXxzEuT8"  # Replace with your bot token
+ADMIN_ID = 6260262910  # Replace with your admin ID
 DB_NAME = "file_bot.db"  # Database name
 UPLOAD_TYPES = ["video", "photo"]  # Supported file types
 NUM_FILES_TO_INITIALIZE = 10000000  # Number of files to initialize
@@ -72,7 +72,7 @@ ADMIN_KEYBOARD = ReplyKeyboardMarkup(
 )
 
 USER_KEYBOARD = ReplyKeyboardMarkup(
-    [[ KeyboardButton("Get Video 🍒")]],
+    [[KeyboardButton("🎬 Premium Watch"), KeyboardButton("Get Video 🍒")]],
     resize_keyboard=True
 )
 
@@ -134,14 +134,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text("👑 Admin Panel", reply_markup=ADMIN_KEYBOARD)
     else:
         await update.message.reply_text(
-            f"""Hey {user.first_name} {user.last_name or ''} 👑 
-            \nAre you ready for some fun ? 💦
-            \nPlease click the  button to get started..
-            
-            https://t.me/+GqYofme-uIk2ZGVl
-            
-            
-            """,
+            f"""Hey {user.first_name} {user.last_name or ''} 👑 \n
+            Are you ready for some fun ? 💦
+            \nPlease click the  button to get started..""",
+
             reply_markup=USER_KEYBOARD)
 
 
@@ -164,11 +160,8 @@ async def handle_file_upload(update: Update, context: ContextTypes.DEFAULT_TYPE)
         
         await update.message.reply_text("Invalid file type. Send a video or photo.")
         return
-
-    caption = message.caption
-    if   caption:
-        await update.message.reply_text("Please send a file with a title as caption.")
-        return
+# Get caption or use empty string
+    caption = message.caption or ""
 
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -245,7 +238,7 @@ async def view_content(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if update.message.text == "🎬 Premium Watch":
         limit = 100
     elif update.message.text == "Get Video 🍒":
-        limit = 2
+        limit = 3
     else:
         limit = 2  # Default limit (shouldn't happen)
 
@@ -258,7 +251,7 @@ async def view_content(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             file_data = c.fetchone()  # Get the file data
 
             if not file_data:
-                await update.message.reply_text("No files available.")
+                await update.message.reply_text("No available.")
                 return
 
             file_id, file_hash, file_type, title = file_data
